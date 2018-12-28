@@ -11,7 +11,8 @@ options:
   replace:
     - ['c00', 'coo']
     - ['c10', 'coo']
+    - ['-+', '']  # some weird hyphens may appear
 table:
   header: (item|iten)\s+codigo.*vl.*(?=\n)
-  line_start: \n\d*.+\d+
+  line_start: \n\d+\s+(\d+)?
   footer: total\s*r\$
