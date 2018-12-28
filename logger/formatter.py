@@ -43,8 +43,7 @@ def format_logger(logger):
     # sets the logger format handler
     handler.setFormatter(
         LogFormatter(
-            "%(asctime)s - %(name)s - level=%(levelname)s - "
-            "request_id=%(request_id)s - %(message)s"
+            "%(asctime)s - %(name)s - level=%(levelname)s - %(message)s"
         )
     )
 

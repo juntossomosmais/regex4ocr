@@ -2,8 +2,8 @@
 Main module to parse OCR results.
 """
 import logging
-from parser.analyzer import scan_drms_folder
-from parser.drm import parse_ocr_result
+from parser.drm_scanner import scan_drms_folder
+from parser.parser import parse_ocr_result
 
 from logger.formatter import format_logger
 
