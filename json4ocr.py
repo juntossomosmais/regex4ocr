@@ -12,8 +12,8 @@ logger = format_logger(logging.getLogger(__name__))
 
 def json4ocr(ocr_result, drms_path="./drms"):
     """
-    Applies regexp rules to the ocr result string in order to extract required
-    data to JSON format.
+    Applies regexp rules to the ocr result string in order to extract the
+    desired data and convert it to a final JSON (Python dict) format.
 
     Args:
         ocr_result (str): OCR result string;

@@ -3,7 +3,7 @@ Module with the drm parser.
 """
 import logging
 from parser.extraction import extract_ocr_data
-from parser.pre_process import get_all_drms_match
+from parser.drm_scanner import get_all_drms_match
 from parser.pre_process import pre_process_result
 
 from logger.formatter import format_logger

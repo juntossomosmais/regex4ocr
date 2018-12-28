@@ -42,9 +42,7 @@ def format_logger(logger):
 
     # sets the logger format handler
     handler.setFormatter(
-        LogFormatter(
-            "%(asctime)s - %(name)s - level=%(levelname)s - %(message)s"
-        )
+        LogFormatter("%(asctime)s - %(name)s - levelee=%(levelname)s - %(message)s")
     )
 
     # sets the logger level based on the os variable

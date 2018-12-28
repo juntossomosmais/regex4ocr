@@ -4,12 +4,52 @@ to load the available DRMs for the document parser.
 """
 import logging
 import os
+import re
 from parser.validation import is_valid_drm
 from parser.yml_parser import parse_yml
 
 from logger.formatter import format_logger
 
 logger = format_logger(logging.getLogger(__name__))
+
+
+def has_drm_match(ocr_result, drm):
+    """
+    Checks if a drm matches the ocr_result format.
+
+    Args:
+        ocr_result (str): OCR result string;
+        drm (dict): DRM dict object for parsing the OCR string.
+
+    Returns:
+        (bool): Returns True if the DRM identifier matches with
+                OCR result string.
+    """
+    id_regexps = drm["identifiers"]
+
+    for id_regexp in id_regexps:
+        regexp = re.compile(id_regexp, re.IGNORECASE)
+
+        if not re.search(regexp, ocr_result):
+            return False
+
+    return True
+
+
+def get_all_drms_match(ocr_result, drms):
+    """
+    Returns all DRM dicts that matches the OCR string document model.
+
+    Args:
+        ocr_result (str): OCR result string;
+        drms (dict): list of all DRMs dicts found in the DRM directory folder.
+
+    Returns:
+        (list): List of all DRM dicts that matches the OCR document string.
+    """
+    drm_matches = [drm for drm in drms if has_drm_match(ocr_result, drm)]
+
+    return drm_matches
 
 
 def scan_drms_folder(drms_path):

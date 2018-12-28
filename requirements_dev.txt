@@ -3,3 +3,8 @@ black==18.9b
 pylint==2.1.1
 pep8==1.7.1
 flake8==3.6.0
+pytest
+tox
+pytest-cov
+coverage
+coveralls
