@@ -1,6 +1,7 @@
-# json4ocr
+# regex4ocr
 
-A simple library to plug into your favorite OCR result and extract desired fields into jsons.
+A simple library to plug regular expression models to parse your favorite OCR
+output and extract important fields and info from it.
 
 ## Document Regexp Model (DRM)
 

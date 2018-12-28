@@ -59,9 +59,9 @@ def main():
         os.environ["LOGGING_LEVEL"] = "DEBUG"
 
     # Python imports json4ocr module after the logging_level has been set
-    from json4ocr import json4ocr
+    from regex4ocr import regex4ocr
 
-    json4ocr(ocr_result)
+    regex4ocr(ocr_result)
 
 
 if __name__ == "__main__":
