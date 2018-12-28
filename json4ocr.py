@@ -2,6 +2,7 @@
 Main module to parse OCR results.
 """
 import logging
+import pprint
 from parser.drm_scanner import scan_drms_folder
 from parser.parser import parse_ocr_result
 
@@ -29,6 +30,8 @@ def json4ocr(ocr_result, drms_path="./drms"):
     logger.info("Parsing the OCR string result...")
     ocr_data = parse_ocr_result(ocr_result, drm_dicts)
 
-    logger.info("Returning the parsed OCR data...")
+    logger.info(
+        "Returning the parsed OCR data...\n%s", pprint.pformat(ocr_data)
+    )
 
     return ocr_data

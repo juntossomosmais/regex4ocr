@@ -23,18 +23,22 @@ def parse_ocr_result(ocr_result, drms):
     Returns:
         (list): List of all DRM dicts that matches the OCR document string.
     """
+    logger.info("Verifying DRMs that match with this OCR document string...")
     drms = get_all_drms_match(ocr_result, drms)
 
     if not drms:
         raise RuntimeError("No DRM Match!")
 
     drm = drms[0]
+    logger.info("Using the following DRM: %s", drm)
 
+    logger.info("Pre processing the OCR result according to DRM...")
     pre_processed_result = pre_process_result(ocr_result, drm)
-    data = extract_ocr_data(pre_processed_result, drm)
+    logger.debug(
+        "Showing pre processed OCR result...\n%s", pre_processed_result
+    )
 
-    print("\n=========== Pre Processed Rslt ===========")
-    print(pre_processed_result)
-    print("=========== // ============ // ===========\n")
+    logger.info("Extracting json data from the OCR pre processed result...")
+    data = extract_ocr_data(pre_processed_result, drm)
 
     return data

@@ -7,8 +7,6 @@ import os
 
 from google.cloud import vision
 
-from json4ocr import json4ocr
-
 
 def detect_text(path):
     """
@@ -25,6 +23,7 @@ def detect_text(path):
 
     # response = client.text_detection(image=image)
     response = client.document_text_detection(image=image)
+
     texts = response.text_annotations
 
     return texts
@@ -38,7 +37,7 @@ def parse_args():
 
     parser.add_argument("-a", "--auth", default="./auth.json")
     parser.add_argument("-i", "--image", required=True)
-    parser.add_argument("-s", "--show", nargs="?", const=True, default=None)
+    parser.add_argument("-d", "--debug", default=None, nargs="?", const=True)
     args = vars(parser.parse_args())
 
     return args
@@ -56,17 +55,13 @@ def main():
     texts = detect_text(img_path)
     ocr_result = texts[0].description
 
-    # prints the image text if request by the user
-    if args.get("show"):
-        print("\n=========== Receipt Image Text ===========")
-        print(ocr_result)
-        print("=========== // ============ // ===========\n")
+    if args.get("debug"):
+        os.environ["LOGGING_LEVEL"] = "DEBUG"
 
-    json = json4ocr(ocr_result)
+    # Python imports json4ocr module after the logging_level has been set
+    from json4ocr import json4ocr
 
-    print("\n=========== R E S U L T S ===========")
-    print(json)
-    print("=========== // ============ // ===========\n")
+    json4ocr(ocr_result)
 
 
 if __name__ == "__main__":
