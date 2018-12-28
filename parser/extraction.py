@@ -116,7 +116,7 @@ def get_table_rows(table_data, drm):
     row_matches = re.finditer(row_start_re, table_data)
     starts = []
     ends = []
-    
+
     if row_matches:
         for m in row_matches:
             starts.append(m.span()[0])
