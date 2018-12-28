@@ -7,7 +7,7 @@ import re
 
 from unidecode import unidecode
 
-from logger.formatter import format_logger
+from regex4ocr.logger.formatter import format_logger
 
 logger = format_logger(logging.getLogger(__name__))
 

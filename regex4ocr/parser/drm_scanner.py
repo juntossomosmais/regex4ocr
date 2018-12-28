@@ -5,10 +5,10 @@ to load the available DRMs for the document parser.
 import logging
 import os
 import re
-from parser.validation import is_valid_drm
-from parser.yml_parser import parse_yml
 
-from logger.formatter import format_logger
+from regex4ocr.logger.formatter import format_logger
+from regex4ocr.parser.validation import is_valid_drm
+from regex4ocr.parser.yml_parser import parse_yml
 
 logger = format_logger(logging.getLogger(__name__))
 

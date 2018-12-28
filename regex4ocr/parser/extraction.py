@@ -5,7 +5,7 @@ string pre processing stage.
 import logging
 import re
 
-from logger.formatter import format_logger
+from regex4ocr.logger.formatter import format_logger
 
 logger = format_logger(logging.getLogger(__name__))
 
