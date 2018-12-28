@@ -1,14 +1,27 @@
 """
 Module with the drm parser.
 """
+import logging
 import re
 
 from unidecode import unidecode
+
+from logger.formatter import format_logger
+
+logger = format_logger(logging.getLogger(__name__))
 
 
 def has_drm_match(ocr_result, drm_dict):
     """
     Checks if a drm matches the ocr_result format.
+
+    Args:
+        ocr_result (str): OCR result string;
+        drm_dict (dict): DRM dict object for parsing the OCR string.
+
+    Returns:
+        (bool): Returns True if the DRM identifier matches with
+                OCR result string.
     """
     id_regexps = drm_dict["identifiers"]
 
@@ -146,21 +159,6 @@ def get_table_rows(table_data, drm):
         for start, end in zip(starts, ends):
             row = table_data[start:end].replace("\n", "")
             rows.append(row)
-
-    # print(f"match: {table_data[row_start:row_end]}")
-    # row = table_data[row_start:row_end].replace("\n", " ")
-    # rows.append(row)
-    # row_regexp = re.compile(
-    #     row_start_re + ".+" + f"(?={row_end_re})", re.MULTILINE | re.DOTALL
-    # )
-    # row_matches = re.finditer(row_regexp, table_data)
-
-    # for m in row_matches:
-    #     row_start, row_end = m.span()
-
-    #     print(f"match: {table_data[row_start:row_end]}")
-    #     row = table_data[row_start:row_end].replace("\n", " ")
-    #     rows.append(row)
 
     return rows
 

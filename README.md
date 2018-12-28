@@ -1,4 +1,4 @@
-# JSON 4 OCR
+# json4ocr
 
 A simple library to plug into your favorite OCR result and extract desired fields into jsons.
 
