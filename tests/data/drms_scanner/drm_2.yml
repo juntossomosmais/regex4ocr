@@ -1,0 +1,8 @@
+identifiers:
+  - id1
+  - id2
+  - id2
+fields:
+  test1: key1
+  test2: key2
+  test3: key3
