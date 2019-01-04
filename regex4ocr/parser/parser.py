@@ -21,13 +21,34 @@ def parse_ocr_result(ocr_result, drms):
         drms (dict): list of all DRMs dicts found in the DRM directory folder.
 
     Returns:
-        (list): List of all DRM dicts that matches the OCR document string.
+        (dict): the extracted data from the OCR results.
+
+    Example of the extracted data:
+    
+        {
+            "fields": {
+                "field1": "result1",
+                "field2": "result2"
+            },
+            "table": {
+                "header": "table header",
+                "all_rows": "all rows together here...",
+                "rows": [
+                    "row 1 result",
+                    "row 2 result",
+                    ...
+                ],
+                "footer": "table footer"
+            }
+        }
     """
     logger.info("Verifying DRMs that match with this OCR document string...")
     drms = get_all_drms_match(ocr_result, drms)
 
     if not drms:
-        raise RuntimeError("No DRM Match!")
+        logger.warning("No DRM matches this OCR result. Returning None...")
+
+        return {}
 
     drm = drms[0]
     logger.info("Using the following DRM: %s", drm)

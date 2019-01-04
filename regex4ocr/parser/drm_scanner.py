@@ -45,7 +45,8 @@ def get_all_drms_match(ocr_result, drms):
         drms (dict): list of all DRMs dicts found in the DRM directory folder.
 
     Returns:
-        (list): List of all DRM dicts that matches the OCR document string.
+        (list): List of all DRM dicts that matches the OCR document string or
+                an empty list if there are no DRM matches.
     """
     drm_matches = [drm for drm in drms if has_drm_match(ocr_result, drm)]
 

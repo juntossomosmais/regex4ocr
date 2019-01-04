@@ -5,7 +5,7 @@ from unittest import mock
 
 import pytest
 
-from regex4ocr.main import regex4ocr
+from regex4ocr.main import parse
 from tests.data.aux import open_file
 
 
@@ -34,7 +34,7 @@ def test_regex4ocr_function(
     mocked_scan_drms_folder.return_value = [mocked_drms_1, mocked_drms_2]
     mocked_parse_ocr_result.return_value = "test_parsed_ocr_result"
 
-    assert regex4ocr(ocr_result, drms_path) == "test_parsed_ocr_result"
+    assert parse(ocr_result, drms_path) == "test_parsed_ocr_result"
 
     mocked_scan_drms_folder.assert_called_once_with(drms_path)
     mocked_parse_ocr_result.assert_called_once_with(

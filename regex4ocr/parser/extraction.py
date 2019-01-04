@@ -91,43 +91,56 @@ def extract_table_data(ocr_result, drm):
     }
 
 
-def get_table_rows(table_data, drm):
+def get_table_rows(all_rows, drm):
     """
     Extract rows from the table data substring of the OCR result string
     by using the DRM key "line_start" which denotes the regexp that
     matches the beginning of EACH new line of the tabular data.
 
     Args:
-        table_data (str): tabular substring of the original OCR result string;
-        drm (dict): DRM dict object for parsing the OCR string.
+        all_rows (str): substring containing all rows from the OCR string;
+        drm (dict): DRM dict object for parsing the OCR all rows string.
 
     Returns:
-        (list): List of all the matched rows of the table_data substring
+        (list): List of all the matched rows of the all_rows substring
                 of the original OCR result.
     """
-    if not table_data:
+    if not all_rows:
         return []
 
-    table = drm.get("table")
+    # table data is guaranteed here
+    row_start_re = drm["table"]["line_start"]
+    row_matches = re.finditer(row_start_re, all_rows)
+
+    # holds all line start indexes when regexp matches
+    line_start_indexes = []
+
+    # holds all the end of line indexes
+    line_ends_indexes = []
+
+    # holds rows slices of the original string based on start:end indexes
     rows = []
 
-    row_start_re = table["line_start"]
-
-    row_matches = re.finditer(row_start_re, table_data)
-    starts = []
-    ends = []
-
     if row_matches:
+
         for m in row_matches:
-            starts.append(m.span()[0])
+            # gets the indexes of all_rows string where the regexp
+            # 'line_start' matches
+            line_start_indexes.append(m.span()[0])
 
-        for i in range(0, len(starts) - 1):
-            ends.append(starts[i + 1])
+        # the end of a line in the all_rows string is marked by
+        # the beginning of the next line_start_index
+        for i in range(0, len(line_start_indexes) - 1):
+            line_ends_indexes.append(line_start_indexes[i + 1])
 
-        ends.append(len(table_data) - 1)
+        # the last index that marks the end of the last line is
+        # length of the all_rows string
+        all_rows_end_index = len(all_rows) - 1
+        line_ends_indexes.append(all_rows_end_index)
 
-        for start, end in zip(starts, ends):
-            row = table_data[start:end].replace("\n", "")
+        # appends all rows substring based on the start:end indexes
+        for start, end in zip(line_start_indexes, line_ends_indexes):
+            row = all_rows[start:end].replace("\n", "")
             rows.append(row)
 
     return rows
@@ -156,6 +169,7 @@ def extract_ocr_data(ocr_result, drm):
             },
             "table": {
                 "header": "table header",
+                "all_rows": "all rows together here...",
                 "rows": [
                     "row 1 result",
                     "row 2 result",

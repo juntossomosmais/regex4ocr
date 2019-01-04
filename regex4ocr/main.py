@@ -10,7 +10,7 @@ from regex4ocr.parser.parser import parse_ocr_result
 logger = format_logger(logging.getLogger(__name__))
 
 
-def regex4ocr(ocr_result, drms_path="./drms"):
+def parse(ocr_result, drms_path="./drms"):
     """
     Applies regexp rules to the ocr result string in order to extract the
     desired data and convert it to a final JSON (Python dict) format.
@@ -21,7 +21,8 @@ def regex4ocr(ocr_result, drms_path="./drms"):
                          document regexp models (drms).
 
     Returns:
-        (dict): Python dict with the results.
+        (dict): Python dict with the results or None if no DRM
+                matches the ocr_result string.
     """
     logger.info("Scanning DRMs directory...")
     drm_dicts = scan_drms_folder(drms_path)
