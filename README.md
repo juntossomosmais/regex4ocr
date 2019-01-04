@@ -57,13 +57,14 @@ troco r$
 (...)
 ```
 
+
 The OCR result is finally parsed into the following JSON based on the DRM yml regular expressions:
 
 ```javascript
 {
     'cnpj': '11.123.456/0001-99',
     'coo': '047621',
-    'table': '\n17273 breit grossa -7mts" bunx373 ft 288 026\n2 $17 pedra 1 (ht) 2unx84 694 f1\n169 38g\n003 515 cimento votoran todas as obras 50 kg\ncred)\nboun x 26.489 f1\n794,676\n', 
+    'table': '\n17273 breit grossa -7mts" bunx373 ft 288 026\n2 $17 pedra 1 (ht) 2unx84 694 f1\n169 38g\n003 515 cimento votoran todas as obras 50 kg\ncred)\nboun x 26.489 f1\n794,676\n',
     'rows': [
         '17273 breit grossa -7mts" bunx373 ft 288 026', '2 $17 pedra 1 (ht) 2unx84 694 f1', 
         '169 38g', 
