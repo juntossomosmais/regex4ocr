@@ -3,6 +3,12 @@
 A simple library to plug regular expression models (Document Regex Models) to parse your favorite OCR string output and extract important fields
 from the OCR picture.
 
+## Built with
+
+* Python 3.7.1 (but the library supports any Python 3.x);
+* PyYAML for yml parsing;
+* Tox and Pytest for testing.
+
 ## Document Regexp Model (DRM)
 
 The DRM are yml files which describes the desired documents with many regular expressions. Those are used to extract the document data in order to transform the OCR results into a structured Python dict.
@@ -43,14 +49,6 @@ In order for the OCR string of a picture to be parsed properly, a regexp express
 ```header```: regexp which marks the header of the table data in the OCR string.
 ```line_start```: regexp that matches the beginning of EVERY new line of the table. The rows fields in the final dictionary requires this field.
 ```footer```: regexp that matches the end of the table data. This is used to stop trying to parse the table rows.
-
-
-
-## Built with
-
-* Python 3.7.1 (but the library supports any Python 3.x);
-* PyYAML for yml parsing;
-* Tox and Pytest for testing.
 
 ## Transform OCR images into structured data
 
@@ -139,7 +137,7 @@ This project uses the following linters:
 Also, the code is formatted with the Black formatter (https://github.com/ambv/black). Some Black configuration can be found
 at the ```pyproject.toml``` file.
 
-### OCR and DRM example:
+## OCR and DRM example:
 
 Given the following DRM which exists at a folder named ```drms```:
 
