@@ -205,7 +205,7 @@ Here's the final result:
 ```python
 {
     "fields": {
-        "cnpk": "11.123.456/0001-99",
+        "cnpj": "11.123.456/0001-99",
         "coo": "047621",
     },
     "table": {
