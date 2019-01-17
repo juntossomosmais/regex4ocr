@@ -215,7 +215,6 @@ def extract_ocr_data(ocr_result, drm):
 
         if rows:
 
-            # attempts to extract named group regexps
             rows_data = [extract_row_named_groups(row, drm) for row in rows]
             extracted_data["table"]["rows"] = rows_data
 
