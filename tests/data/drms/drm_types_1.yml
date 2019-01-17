@@ -16,8 +16,8 @@ options:
     - ['boun', '30un']
     - ['b0un', '30un']
 table:
-  header: (?s)(item|iten)\s+codigo.*vl\s+(item|iten).*?(?=\n)  # re.DOTALL but the last dot is NOT greedy
-  line_start: \n\d+(\s+)?\d+\s\w  # it's a must to have a space 1 char after (prod description)
+  header: (item|iten)\s+codigo.*vl.*(?=\n)
+  line_start: \n\d+\s+(\d+)?
   inline_named_group_captures: (?P<description>.+)(?P<qty>\d+)\s*(?P<unit>[a-z]+)\s*x\s*\d+
   footer: total\s*r\$
 types:

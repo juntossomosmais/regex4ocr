@@ -5,6 +5,8 @@ string pre processing stage.
 import logging
 import re
 
+from regex4ocr.parser.type_casting import validate_types
+
 logger = logging.getLogger(__name__)
 
 
@@ -44,11 +46,15 @@ def extract_fields(ocr_result, drm):
         rslt = re.search(regexp, ocr_result)
 
         if rslt:
+            logger.debug("Found regexp for field: %s", field)
+
             # checks for first group
             if rslt.groups():
                 data[field] = rslt.groups()[0]
             else:
                 data[field] = rslt[0]
+
+    logger.debug("Returning data after fields extraction: %s", data)
 
     return data
 
@@ -70,13 +76,20 @@ def extract_table_data(ocr_result, drm):
     table = drm.get("table")
 
     if table:
+        logger.debug("Beginning table regexp scan...")
+
         header_regexp = table["header"]
         end_regexp = table["footer"]
 
         header = re.search(header_regexp, ocr_result)
         footer = re.search(end_regexp, ocr_result)
 
-        if not header or not footer:
+        if not header:
+            logger.debug("Table header was not found...")
+            return None
+
+        if not footer:
+            logger.debug("Table footer was not found...")
             return None
 
         beg = header.span()[1]
@@ -121,6 +134,8 @@ def get_table_rows(all_rows, drm):
 
     if row_matches:
 
+        logger.debug("Found row matches, iterating over each match...")
+
         for m in row_matches:
             # gets the indexes of all_rows string where the regexp
             # 'line_start' matches
@@ -141,6 +156,8 @@ def get_table_rows(all_rows, drm):
             row = all_rows[start:end].replace("\n", "")
             rows.append(row)
 
+    logger.debug("Returning rows: %s", rows)
+
     return rows
 
 
@@ -154,16 +171,24 @@ def extract_row_named_groups(row, drm):
     Returns:
         (list): list of all the group matches for each row.
     """
+    logger.debug("Beginning named group regexp matching for row: %s", row)
+
     named_group_regexp = drm.get("table").get("inline_named_group_captures")
     row_structure = {"row": row, "data": {}}
 
     if named_group_regexp:
-        # applies regexp with named groups
         rslt = re.search(named_group_regexp, row)
 
         # some named groups were found
         if rslt:
+            logger.debug(
+                "Found named group regexp for the row, group dict: %s",
+                rslt.groupdict(),
+            )
             row_structure["data"] = rslt.groupdict()
+
+        else:
+            logger.debug("Named group regexp not found...")
 
     return row_structure
 
@@ -201,21 +226,33 @@ def extract_ocr_data(ocr_result, drm):
             }
         }
     """
+    # types sections of the drm
     extracted_data = {"fields": {}, "table": {}}
+
+    logger.info("Performing fields extraction...")
     extracted_data["fields"] = extract_fields(ocr_result, drm)
 
     # may be empty
+    logger.info("Performing table data extraction...")
     table_data = extract_table_data(ocr_result, drm)
 
     if table_data:
         extracted_data["table"] = table_data
 
         # may be empty
+        logger.info("Performing table rows extraction...")
         rows = get_table_rows(table_data["all_rows"], drm)
 
         if rows:
+            logger.info("Performing named groups extraction for each row...")
 
-            rows_data = [extract_row_named_groups(row, drm) for row in rows]
-            extracted_data["table"]["rows"] = rows_data
+            extracted_data["table"]["rows"] = [
+                extract_row_named_groups(row, drm) for row in rows
+            ]
+
+    # mutates final dict according to the types informed in the DRM
+    logger.info("Performing typing validations...")
+
+    validate_types(extracted_data, drm)
 
     return extracted_data
