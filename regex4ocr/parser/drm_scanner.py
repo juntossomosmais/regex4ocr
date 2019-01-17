@@ -6,11 +6,10 @@ import logging
 import os
 import re
 
-from regex4ocr.logger.formatter import format_logger
 from regex4ocr.parser.validation import is_valid_drm
 from regex4ocr.parser.yml_parser import parse_yml
 
-logger = format_logger(logging.getLogger(__name__))
+logger = logging.getLogger(__name__)
 
 
 def has_drm_match(ocr_result, drm):

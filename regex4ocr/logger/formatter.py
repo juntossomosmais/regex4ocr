@@ -1,10 +1,9 @@
 """
 Module which sets the logging configuration and format for the app.
 """
-
 import logging
+import logging.config
 import os
-import sys
 
 # module variables to configure the logs
 LOGGING_LEVEL = os.environ.get("LOGGING_LEVEL", "INFO")
@@ -17,40 +16,16 @@ LEVEL_MAPPING = {
 }
 
 
-class LogFormatter(logging.Formatter):
+def config_log():
     """
-    This class formats each log record before sending it to the
-    output stream.
+    Configures the root logger of the application.
     """
-
-    def format(self, record):
-        return super(LogFormatter, self).format(record)
-
-
-def format_logger(logger):
-    """
-    Sets a specific format for the logger.
-
-    Args:
-        logger (logging.Logger): The logger instance.
-
-    Returns:
-        (logging.Logger): The formatted logger instance.
-    """
-    # sets the stream output for the logger
-    handler = logging.StreamHandler(sys.stdout)
-
-    # sets the logger format handler
-    handler.setFormatter(
-        LogFormatter(
-            "%(asctime)s - %(name)s - level=%(levelname)s - %(message)s"
-        )
+    my_formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - level=%(levelname)s - %(message)s"
     )
 
-    # sets the logger level based on the os variable
-    logger.setLevel(LEVEL_MAPPING[LOGGING_LEVEL])
+    my_handler = logging.StreamHandler()
+    my_handler.setFormatter(my_formatter)
 
-    # adds the format handler to the logger
-    logger.addHandler(handler)
-
-    return logger
+    logging.getLogger().addHandler(my_handler)
+    logging.getLogger().setLevel(LEVEL_MAPPING[LOGGING_LEVEL])

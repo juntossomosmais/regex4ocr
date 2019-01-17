@@ -3,12 +3,11 @@ Module with the drm parser.
 """
 import logging
 
-from regex4ocr.logger.formatter import format_logger
 from regex4ocr.parser.drm_scanner import get_all_drms_match
 from regex4ocr.parser.extraction import extract_ocr_data
 from regex4ocr.parser.pre_process import pre_process_result
 
-logger = format_logger(logging.getLogger(__name__))
+logger = logging.getLogger(__name__)
 
 
 def parse_ocr_result(ocr_result, drms):

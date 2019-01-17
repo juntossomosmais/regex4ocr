@@ -5,9 +5,7 @@ string pre processing stage.
 import logging
 import re
 
-from regex4ocr.logger.formatter import format_logger
-
-logger = format_logger(logging.getLogger(__name__))
+logger = logging.getLogger(__name__)
 
 
 def extract_fields(ocr_result, drm):
@@ -146,6 +144,30 @@ def get_table_rows(all_rows, drm):
     return rows
 
 
+def extract_row_named_groups(row, drm):
+    """
+    Performs inline group extreation for each line of the found tabular data.
+
+    Args:
+        rows (str): row of the tabular data as strings.
+
+    Returns:
+        (list): list of all the group matches for each row.
+    """
+    named_group_regexp = drm.get("table").get("inline_named_group_captures")
+    row_structure = {"row": row, "data": {}}
+
+    if named_group_regexp:
+        # applies regexp with named groups
+        rslt = re.search(named_group_regexp, row)
+
+        # some named groups were found
+        if rslt:
+            row_structure["data"] = rslt.groupdict()
+
+    return row_structure
+
+
 def extract_ocr_data(ocr_result, drm):
     """
     Performs all the data extraction by calling the extraction functions.
@@ -192,6 +214,9 @@ def extract_ocr_data(ocr_result, drm):
         rows = get_table_rows(table_data["all_rows"], drm)
 
         if rows:
-            extracted_data["table"]["rows"] = rows
+
+            # attempts to extract named group regexps
+            rows_data = [extract_row_named_groups(row, drm) for row in rows]
+            extracted_data["table"]["rows"] = rows_data
 
     return extracted_data

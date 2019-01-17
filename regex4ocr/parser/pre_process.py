@@ -7,9 +7,7 @@ import re
 
 from unidecode import unidecode
 
-from regex4ocr.logger.formatter import format_logger
-
-logger = format_logger(logging.getLogger(__name__))
+logger = logging.getLogger(__name__)
 
 
 def process_replaces(pre_process_str, replaces):
