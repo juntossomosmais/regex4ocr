@@ -18,5 +18,5 @@ options:
 table:
   header: (item|iten)\s+codigo.*vl.*(?=\n)
   line_start: \n\d+\s+(\d+)?
+  inline_named_group_captures: (?P<description>.+)(?P<qty>\d+)\s*(?P<unit>[a-z]+)\s*x\s*\d+
   footer: total\s*r\$
-  inline_named_group_captures: '(?P<qty>\d+)\s*(?P<unit>\w+)\s+x'

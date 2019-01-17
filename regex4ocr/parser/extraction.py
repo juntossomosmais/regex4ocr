@@ -193,8 +193,8 @@ def extract_ocr_data(ocr_result, drm):
                 "header": "table header",
                 "all_rows": "all rows together here...",
                 "rows": [
-                    "row 1 result",
-                    "row 2 result",
+                    {"row": "row 1 result", "data": {"group1": "key1",...}}
+                    {"row": "row 1 result", "data": {"group1": "key1",...}}
                     ...
                 ],
                 "footer": "table footer"
