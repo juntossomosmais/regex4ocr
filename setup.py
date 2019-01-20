@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name="regex4ocr",
-    version="1.4.0",
+    version="1.4.1",
     url="https://github.com/juntossomosmais/regex4ocr",
     license="MIT",
     author="Igor Grillo Peternella",
