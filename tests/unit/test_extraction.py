@@ -5,13 +5,14 @@ import re
 from unittest import mock
 
 import pytest
+
 from regex4ocr.parser.extraction import extract_fields
 from regex4ocr.parser.extraction import extract_ocr_data
 from regex4ocr.parser.extraction import extract_row_named_groups
 from regex4ocr.parser.extraction import extract_table_data
 from regex4ocr.parser.extraction import get_table_rows
+from regex4ocr.parser.extraction import get_uniqueness_fields
 from regex4ocr.parser.yml_parser import parse_yml
-
 from tests.data.aux import open_file
 
 
@@ -394,3 +395,135 @@ def test_extract_row_named_groups_with_inline_regexp(
         )
         == expected_row_2
     )
+
+
+@mock.patch("regex4ocr.parser.extraction.extract_row_named_groups")
+@mock.patch("regex4ocr.parser.extraction.get_table_rows")
+@mock.patch("regex4ocr.parser.extraction.extract_table_data")
+@mock.patch("regex4ocr.parser.extraction.extract_fields")
+def test_extract_ocr_data_table_match_rows_match_uniqueness(
+    mocked_extract_fields,
+    mocked_extract_table_data,
+    mocked_get_table_rows,
+    mocked_extract_row_named_groups,
+):
+    """
+    Unit: tests the overall ocr data extraction function where there is
+          a table_data match and rows matches and there are uniqueness fields.
+    """
+    drm = {"test": "test", "uniqueness_fields": ["field1"]}
+
+    # mock results (field1 is a uniquess field)
+    mocked_fields = {"field1": "result1", "field2": "result2"}
+
+    mocked_table_data = {
+        "header": "test",
+        "all_rows": "row1 row2 row3",
+        "footer": "footer",
+    }
+
+    mocked_table_rows = ["row1", "row2", "row3"]
+    mocked_row_named_groups = [
+        {"row": "row1", "data": {"group_1": "value_1"}},
+        {"row": "row2", "data": {"group_1": "value_1"}},
+        {"row": "row3", "data": {"group_1": "value_1"}},
+    ]
+
+    mocked_extract_fields.return_value = mocked_fields
+    mocked_extract_table_data.return_value = mocked_table_data
+    mocked_get_table_rows.return_value = mocked_table_rows
+    mocked_extract_row_named_groups.side_effect = mocked_row_named_groups
+
+    expected_extracted_data = {
+        "fields": mocked_fields,
+        "table": mocked_table_data,
+        "uniqueness_fields": {"field1": "result1"},
+    }
+
+    expected_extracted_data["table"]["rows"] = mocked_row_named_groups
+
+    # method invocation
+    assert extract_ocr_data("ocr result", drm) == expected_extracted_data
+
+    # mock assertions
+    mocked_extract_fields.assert_called_once_with("ocr result", drm)
+
+    mocked_extract_table_data.return_assert_called_once_with("ocr result", drm)
+
+    mocked_get_table_rows.assert_called_once_with(
+        mocked_table_data["all_rows"], drm
+    )
+
+    mocked_extract_row_named_groups.return_value.assert_has_calls = [
+        mock.call("row1", drm),
+        mock.call("row2", drm),
+        mock.call("row3", drm),
+    ]
+
+@mock.patch("regex4ocr.parser.extraction.extract_row_named_groups")
+@mock.patch("regex4ocr.parser.extraction.get_table_rows")
+@mock.patch("regex4ocr.parser.extraction.extract_table_data")
+@mock.patch("regex4ocr.parser.extraction.extract_fields")
+def test_extract_ocr_data_uniqueness_not_found(
+    mocked_extract_fields,
+    mocked_extract_table_data,
+    mocked_get_table_rows,
+    mocked_extract_row_named_groups,
+):
+    """
+    Unit: tests the overall ocr data extraction function where there is
+          a table_data match and rows matches and there are uniqueness fields.
+    """
+    drm = {"test": "test", "uniqueness_fields": ["field99"]}
+
+    # mock results (field1 is a uniquess field)
+    mocked_fields = {"field1": "result1", "field2": "result2"}
+    mocked_extract_fields.return_value = mocked_fields
+
+    # method invocation
+    assert extract_ocr_data("ocr result", drm) == {}
+
+    # mock assertions
+    mocked_extract_fields.assert_called_once_with("ocr result", drm)
+    mocked_extract_table_data.assert_not_called()
+    mocked_get_table_rows.assert_not_called()
+    mocked_extract_row_named_groups.assert_not_called()
+
+
+def test_get_uniqueness_fields_ok():
+    """
+    Unit: asserts that all unique fields are returned when found.
+    """
+    fields_section = {"k1": 1, "k2": 2, "k3": 3}
+
+    uniqueness_fields = ["k1", "k3"]
+
+    expected_data = {"k1": 1, "k3": 3}
+
+    assert (
+        get_uniqueness_fields(fields_section, uniqueness_fields)
+        == expected_data
+    )
+
+
+def test_get_uniqueness_fields_not_found():
+    """
+    Unit: asserts an empty dict is returned when a unique field is not found.
+    """
+    fields_section = {"k1": 1, "k2": 2, "k3": 3}
+
+    uniqueness_fields = ["k1", "k3", "k7"]
+
+    assert get_uniqueness_fields(fields_section, uniqueness_fields) == {}
+
+
+def test_get_uniqueness_fields_excepion():
+    """
+    Unit: asserts an exception is raised when uniqueness fields is NOT a list.
+    """
+    fields_section = {"k1": 1, "k2": 2, "k3": 3}
+
+    uniqueness_fields = "whatever"
+
+    with pytest.raises(BaseException):
+        get_uniqueness_fields(fields_section, uniqueness_fields)

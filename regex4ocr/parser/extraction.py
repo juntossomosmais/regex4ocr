@@ -193,6 +193,38 @@ def extract_row_named_groups(row, drm):
     return row_structure
 
 
+def get_uniqueness_fields(fields_section, uniqueness_fields):
+    """
+    Asserts that all uniqueness_fields are present in the extracted_data
+    "fields" section. If not, returns an empty dict. Returns a dictionary
+    with the unique keys.
+
+    Args:
+        fields_section (dict): fields subsection of the extracted data dict;
+        uniquess_fields (list): list of fields that must be present in the
+                                fields_section.
+
+    Returns:
+        (dict): the uniqueness fields if found. Otherwise, returns an empty
+                dict.
+    """
+    if not isinstance(uniqueness_fields, list):
+        raise BaseException("Uniqueness field is NOT a list")
+
+    if not set(uniqueness_fields).issubset(fields_section):
+        logger.info(
+            "Some uniqueness fields were not found: %s, fields: %s",
+            uniqueness_fields,
+            fields_section,
+        )
+        return {}
+
+    return {
+        k: fields_section[k]
+        for k in set(fields_section).intersection(uniqueness_fields)
+    }
+
+
 def extract_ocr_data(ocr_result, drm):
     """
     Performs all the data extraction by calling the extraction functions.
@@ -231,6 +263,21 @@ def extract_ocr_data(ocr_result, drm):
 
     logger.info("Performing fields extraction...")
     extracted_data["fields"] = extract_fields(ocr_result, drm)
+
+    logger.info("Checking if there are fields for uniqueness...")
+    uniqueness_fields = drm.get("uniqueness_fields")
+
+    if uniqueness_fields:
+        logger.info("Found uniqueness fields: %s", uniqueness_fields)
+
+        found_unique_fields = get_uniqueness_fields(
+            extracted_data["fields"], uniqueness_fields
+        )
+
+        if not found_unique_fields:
+            return {}
+
+        extracted_data["uniqueness_fields"] = found_unique_fields
 
     # may be empty
     logger.info("Performing table data extraction...")
