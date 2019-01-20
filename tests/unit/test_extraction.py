@@ -478,16 +478,50 @@ def test_extract_ocr_data_uniqueness_not_found(
 
     # mock results (field1 is a uniquess field)
     mocked_fields = {"field1": "result1", "field2": "result2"}
+
+    mocked_table_data = {
+        "header": "test",
+        "all_rows": "row1 row2 row3",
+        "footer": "footer",
+    }
+
+    mocked_table_rows = ["row1", "row2", "row3"]
+    mocked_row_named_groups = [
+        {"row": "row1", "data": {"group_1": "value_1"}},
+        {"row": "row2", "data": {"group_1": "value_1"}},
+        {"row": "row3", "data": {"group_1": "value_1"}},
+    ]
+
     mocked_extract_fields.return_value = mocked_fields
+    mocked_extract_table_data.return_value = mocked_table_data
+    mocked_get_table_rows.return_value = mocked_table_rows
+    mocked_extract_row_named_groups.side_effect = mocked_row_named_groups
+
+    expected_extracted_data = {
+        "fields": mocked_fields,
+        "table": mocked_table_data,
+        "uniqueness_fields": {"field1": "result1"},
+    }
+
+    expected_extracted_data["table"]["rows"] = mocked_row_named_groups
 
     # method invocation
-    assert extract_ocr_data("ocr result", drm) == {}
+    assert extract_ocr_data("ocr result", drm) == {}  # uniqueness fields fail
 
     # mock assertions
     mocked_extract_fields.assert_called_once_with("ocr result", drm)
-    mocked_extract_table_data.assert_not_called()
-    mocked_get_table_rows.assert_not_called()
-    mocked_extract_row_named_groups.assert_not_called()
+
+    mocked_extract_table_data.return_assert_called_once_with("ocr result", drm)
+
+    mocked_get_table_rows.assert_called_once_with(
+        mocked_table_data["all_rows"], drm
+    )
+
+    mocked_extract_row_named_groups.return_value.assert_has_calls = [
+        mock.call("row1", drm),
+        mock.call("row2", drm),
+        mock.call("row3", drm),
+    ]
 
 
 def test_get_uniqueness_fields_ok():

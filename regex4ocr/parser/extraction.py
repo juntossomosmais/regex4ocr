@@ -264,21 +264,6 @@ def extract_ocr_data(ocr_result, drm):
     logger.info("Performing fields extraction...")
     extracted_data["fields"] = extract_fields(ocr_result, drm)
 
-    logger.info("Checking if there are fields for uniqueness...")
-    uniqueness_fields = drm.get("uniqueness_fields")
-
-    if uniqueness_fields:
-        logger.info("Found uniqueness fields: %s", uniqueness_fields)
-
-        found_unique_fields = get_uniqueness_fields(
-            extracted_data["fields"], uniqueness_fields
-        )
-
-        if not found_unique_fields:
-            return {}
-
-        extracted_data["uniqueness_fields"] = found_unique_fields
-
     # may be empty
     logger.info("Performing table data extraction...")
     table_data = extract_table_data(ocr_result, drm)
@@ -299,7 +284,21 @@ def extract_ocr_data(ocr_result, drm):
 
     # mutates final dict according to the types informed in the DRM
     logger.info("Performing typing validations...")
-
     validate_types(extracted_data, drm)
+
+    logger.info("Checking if there are fields for uniqueness...")
+    uniqueness_fields = drm.get("uniqueness_fields")
+
+    if uniqueness_fields:
+        logger.info("Found uniqueness fields: %s", uniqueness_fields)
+
+        found_unique_fields = get_uniqueness_fields(
+            extracted_data["fields"], uniqueness_fields
+        )
+
+        if not found_unique_fields:
+            return {}
+
+        extracted_data["uniqueness_fields"] = found_unique_fields
 
     return extracted_data
