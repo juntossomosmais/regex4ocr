@@ -284,6 +284,7 @@ def test_validate_types_no_removal(
     Unit: tests validate_types when there are not type conflicts.
     """
     # function invocation
+    extracted_data_dict_1 = copy.deepcopy(extracted_data_dict_1)
     validate_types(
         extracted_data_dict_1, drm_model_tax_coupon_with_inline_groups
     )
