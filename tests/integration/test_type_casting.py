@@ -35,7 +35,7 @@ def drm_model_tax_coupon_with_inline_groups():
     return drm
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def extracted_data_dict_1():
     return {
         "fields": {
@@ -300,12 +300,14 @@ def test_validate_types_removal(
     Unit: tests validate_types when there are type conflicts and
           some fields are removed.
     """
-    # creates a deep copy of the fixture so mutations wont affect next tests
-    extracted_data_dict = copy.deepcopy(extracted_data_dict_1)
+    # function invocation
+    validate_types(
+        extracted_data_dict_1, drm_model_tax_coupon_with_inline_groups
+    )
 
-    extracted_data_dict["fields"]["some_int"] = "abc123"  # messes int casting
+    extracted_data_dict_1["fields"]["some_int"] = "abc123"  # messes int casting
 
     # function invocation
-    validate_types(extracted_data_dict, drm_model_tax_coupon_with_inline_groups)
+    validate_types(extracted_data_dict_1, drm_model_tax_coupon_with_inline_groups)
 
-    assert extracted_data_dict == expected_extracted_data_dict_with_removal
+    assert extracted_data_dict_1 == expected_extracted_data_dict_with_removal
