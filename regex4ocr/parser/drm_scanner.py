@@ -64,7 +64,7 @@ def scan_drms_folder(drms_path):
         (list): list of DRMs to parse the ocr result string.
     """
     base_path = os.path.join(drms_path, "")  # adds final flash of the directory
-    all_files = os.listdir(drms_path)
+    all_files = sorted(os.listdir(drms_path))
     drms = []
 
     for file in all_files:
